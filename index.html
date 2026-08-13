@@ -12,7 +12,7 @@
         .quran-font { font-family: 'Amiri', serif; }
         .tafseer-block.hidden-tafseer { display: none; }
         
-        /* تخصيص شريط التقديم والتأخير ليكون واسع وسهل اللمس */
+        /* تخصيص شريط التقديم والتأخير */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
@@ -37,6 +37,45 @@
             -webkit-appearance: none;
             margin-top: -6px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* Animations custom CSS */
+        .btn-animate {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-animate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+        .btn-animate:active {
+            transform: translateY(1px) scale(0.97);
+        }
+
+        .card-zkr {
+            transition: all 0.2s ease;
+        }
+        .card-zkr:active {
+            transform: scale(0.96);
+            background-color: #d1fae5;
+        }
+
+        /* Modal Popup Animation */
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .modal-animated {
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
@@ -59,14 +98,14 @@
                 <span>🤲</span> أدعية للمتوفى
             </h2>
             <div class="space-y-4">
-                <div class="p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 leading-relaxed text-right">
+                <div class="p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 leading-relaxed text-right transition hover:border-emerald-300">
                     <p class="text-base font-medium text-gray-800 quran-font text-lg">
                         « اللَّهُمَّ إنَّ فُلَانَ بْنَ فُلَانٍ فِي ذِمَّتِكَ وَحَبْلِ جِوَارِكَ، فَقِهِ مِنْ فِتْنَةِ الْقَبْرِ وَعَذَابِ النَّارِ، وَأَنْتَ أَهْلُ الْوَفَاءِ وَالْحَقِّ، اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ، فَإِنَّكَ أَنْتَ الْغَفُورُ الرَّحِيمُ »
                     </p>
                     <span class="inline-block mt-2 text-xs font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md">رواه أحمد وأبو داود</span>
                 </div>
 
-                <div class="p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 leading-relaxed text-right">
+                <div class="p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 leading-relaxed text-right transition hover:border-emerald-300">
                     <p class="text-base font-medium text-gray-800 quran-font text-lg">
                         « اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَاعْفُ عَنْهُ وَعَافِهِ وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مُدْخَلَهُ، وَاغْسِلْهُ بِمَاءٍ وَثَلْجٍ وَبَرَدٍ، وَنَقِّهِ مِنَ الْخَطَايَا كَمَا يُنَقَّى الثَّوْبُ الْأَبْيَضُ مِنَ الدَّنَسِ، وَأَبْدِلْهُ دَاراً خَيْراً مِنْ دَارِهِ، وَأَهْلاً خَيْراً مِنْ أَهْلِهِ، وَزَوْجاً خَيْراً مِنْ زَوْجِهِ، وَقِهِ فِتْنَةَ الْقَبْرِ وَعَذَابِ النَّارِ »
                     </p>
@@ -91,7 +130,7 @@
                 <span>📖</span> القرآن الكريم
             </h2>
             
-            <!-- مشغّل صوت احترافي ومخصص للهواتف -->
+            <!-- مشغّل صوت احترافي ومخصص للهواتف مع انيميشن -->
             <div class="bg-emerald-900 text-white p-5 rounded-2xl mb-6 shadow-md flex flex-col gap-4">
                 <div class="flex justify-between items-center border-b border-emerald-800 pb-3">
                     <div>
@@ -102,24 +141,24 @@
 
                 <audio id="audio-player"></audio>
 
-                <!-- شريط التقديم المخصص والعريض -->
+                <!-- شريط التقديم -->
                 <div class="space-y-1">
                     <input type="range" id="seek-bar" value="0" min="0" max="100" oninput="seekAudio(this.value)">
-                    <div class="flex justify-between text-xs text-emerald-300 font-mono dir-ltr" dir="ltr">
+                    <div class="flex justify-between text-xs text-emerald-300 font-mono" dir="ltr">
                         <span id="current-time">00:00</span>
                         <span id="total-duration">00:00</span>
                     </div>
                 </div>
 
-                <!-- أزرار التحكم كبيرة وسهلة الضغط -->
+                <!-- أزرار التحكم -->
                 <div class="flex justify-center items-center gap-4 pt-1">
-                    <button onclick="skipAudio(-10)" class="bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-emerald-100 p-2.5 rounded-full text-xs font-bold transition">
+                    <button onclick="skipAudio(-10)" class="btn-animate bg-emerald-800 hover:bg-emerald-700 text-emerald-100 p-2.5 rounded-full text-xs font-bold">
                         10- ثا
                     </button>
-                    <button id="main-play-btn" onclick="toggleMainAudio()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-emerald-950 p-4 rounded-full font-bold text-xl transition shadow-lg w-14 h-14 flex items-center justify-center">
+                    <button id="main-play-btn" onclick="toggleMainAudio()" class="btn-animate bg-emerald-400 hover:bg-emerald-300 text-emerald-950 p-4 rounded-full font-bold text-xl shadow-lg w-14 h-14 flex items-center justify-center">
                         ▶
                     </button>
-                    <button onclick="skipAudio(10)" class="bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-emerald-100 p-2.5 rounded-full text-xs font-bold transition">
+                    <button onclick="skipAudio(10)" class="btn-animate bg-emerald-800 hover:bg-emerald-700 text-emerald-100 p-2.5 rounded-full text-xs font-bold">
                         10+ ثا
                     </button>
                 </div>
@@ -133,32 +172,32 @@
 
     </main>
 
-    <!-- نافذة القراءة بملء الشاشة -->
+    <!-- نافذة القراءة بملء الشاشة مع الانيميشن -->
     <div id="surah-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex justify-center items-center p-2 sm:p-4">
-        <div class="bg-white w-full max-w-4xl h-[94vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-emerald-100">
+        <div id="modal-card" class="bg-white w-full max-w-4xl h-[94vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-emerald-100 modal-animated">
             
             <!-- هيدر النافذة -->
             <div class="bg-emerald-800 text-white p-3 sm:p-4 flex flex-wrap justify-between items-center gap-2 border-b border-emerald-700">
                 <div class="flex items-center gap-2 sm:gap-3">
                     <h3 id="modal-surah-title" class="text-lg sm:text-xl font-bold quran-font"></h3>
                     
-                    <button id="modal-audio-btn" onclick="toggleModalAudio()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                    <button id="modal-audio-btn" onclick="toggleModalAudio()" class="btn-animate bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
                         🔊 تشغيل الصوت
                     </button>
 
-                    <button id="toggle-tafseer-btn" onclick="toggleTafseer()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                    <button id="toggle-tafseer-btn" onclick="toggleTafseer()" class="btn-animate bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold">
                         عرض التفسير
                     </button>
                 </div>
 
                 <div class="flex items-center gap-1.5 sm:gap-2">
-                    <button onclick="navigateSurah(-1)" class="bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs sm:text-sm font-bold transition">
+                    <button onclick="navigateSurah(-1)" class="btn-animate bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs sm:text-sm font-bold">
                         « السابقة
                     </button>
-                    <button onclick="navigateSurah(1)" class="bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs sm:text-sm font-bold transition">
+                    <button onclick="navigateSurah(1)" class="btn-animate bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs sm:text-sm font-bold">
                         التالية »
                     </button>
-                    <button onclick="closeSurahModal()" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1 rounded-lg text-xs sm:text-sm font-bold transition mr-1">
+                    <button onclick="closeSurahModal()" class="btn-animate bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1 rounded-lg text-xs sm:text-sm font-bold mr-1">
                         ✖
                     </button>
                 </div>
@@ -175,7 +214,7 @@
     <!-- Footer -->
     <footer class="bg-emerald-900 text-emerald-100 py-6 text-center text-sm border-t border-emerald-700">
         <p class="mb-2">انشر الموقع لتشارك في الأجر</p>
-        <button onclick="shareSite()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold transition inline-flex items-center gap-2">
+        <button onclick="shareSite()" class="btn-animate bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold inline-flex items-center gap-2">
             <span>🔗</span> مشاركة الرابط
         </button>
     </footer>
@@ -196,16 +235,16 @@
         function renderAzkar() {
             const container = document.getElementById('azkar-container');
             container.innerHTML = azkarData.map(item => `
-                <div onclick="handleCardClick(${item.id})" class="p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-100/60 active:scale-[0.98] cursor-pointer select-none transition flex justify-between items-center gap-3">
+                <div onclick="handleCardClick(${item.id})" class="card-zkr p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 hover:border-emerald-300 hover:shadow-sm cursor-pointer select-none flex justify-between items-center gap-3">
                     <p class="text-sm font-medium leading-relaxed">${item.text}</p>
                     <div class="flex items-center gap-1 shrink-0">
                         ${item.count === 0 ? `
-                            <button onclick="event.stopPropagation(); resetCount(${item.id})" class="p-2 bg-emerald-200 text-emerald-800 hover:bg-emerald-300 rounded-lg font-bold transition" title="إعادة">
+                            <button onclick="event.stopPropagation(); resetCount(${item.id})" class="btn-animate p-2 bg-emerald-200 text-emerald-800 hover:bg-emerald-300 rounded-lg font-bold" title="إعادة">
                                 🔄
                             </button>
                             <span class="bg-gray-400 text-white font-bold px-3 py-2 rounded-lg">تم ✓</span>
                         ` : `
-                            <span class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg min-w-[50px] text-center">
+                            <span class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg min-w-[50px] text-center shadow-sm">
                                 ${item.count}
                             </span>
                         `}
@@ -249,7 +288,7 @@
                 const surahList = document.getElementById('surah-list');
                 
                 surahList.innerHTML = allSurahs.map(surah => `
-                    <button onclick="loadSurah(${surah.number}, '${surah.name}')" class="p-3 border rounded-xl hover:bg-emerald-100 hover:border-emerald-300 transition text-right bg-white flex flex-col justify-between">
+                    <button onclick="loadSurah(${surah.number}, '${surah.name}')" class="btn-animate p-3 border rounded-xl hover:bg-emerald-100 hover:border-emerald-300 bg-white flex flex-col justify-between text-right">
                         <span class="text-xs text-emerald-600 font-bold">#${surah.number}</span>
                         <span class="font-bold text-gray-800 quran-font text-lg">${surah.name}</span>
                         <span class="text-[10px] text-gray-500">${surah.numberOfAyahs} آية</span>
@@ -263,18 +302,15 @@
         async function loadSurah(number, name) {
             currentSurahNumber = number;
 
-            // تجهيز الصوت في المشغل الرئيسي المخصص
             document.getElementById('current-surah-title').textContent = `سورة ${name}`;
             player.src = `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${number}.mp3`;
             mainPlayBtn.innerHTML = '▶';
             
-            // ضبط زر الصوت داخل النافذة
             const audioBtn = document.getElementById('modal-audio-btn');
             audioBtn.innerHTML = '🔊 تشغيل الصوت';
             audioBtn.classList.remove('bg-amber-600', 'hover:bg-amber-500');
             audioBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
 
-            // فتح النافذة
             const modal = document.getElementById('surah-modal');
             const textDiv = document.getElementById('modal-surah-text');
             document.getElementById('modal-surah-title').textContent = `سورة ${name}`;
@@ -299,7 +335,7 @@
                     <div id="ayah-container-${ayah.numberInSurah}" class="ayah-block mb-4 border-b border-emerald-200/60 pb-4">
                         <span class="text-gray-800 leading-loose">${ayah.text}</span>
                         <span class="inline-flex items-center justify-center w-8 h-8 text-sm bg-emerald-100 text-emerald-800 rounded-full mx-1 font-bold">${ayah.numberInSurah}</span>
-                        <p class="tafseer-block hidden-tafseer text-base font-sans text-emerald-950 bg-white p-4 rounded-xl mt-3 border-r-4 border-emerald-600 shadow-sm leading-relaxed">
+                        <p class="tafseer-block hidden-tafseer text-base font-sans text-emerald-950 bg-white p-4 rounded-xl mt-3 border-r-4 border-emerald-600 shadow-sm leading-relaxed transition-all">
                             <span class="font-bold text-emerald-700">التفسير: </span>${tafseerData.data.ayahs[idx]?.text || ''}
                         </p>
                     </div>
@@ -311,7 +347,6 @@
             }
         }
 
-        // تحكم المشغل المخصص
         function toggleMainAudio() {
             if (!player.src) return;
             if (player.paused) {
@@ -368,7 +403,6 @@
             return `${mStr}:${sStr}`;
         }
 
-        // تحديث الوقت والشريط أثناء التلاوة
         player.addEventListener('timeupdate', () => {
             if (player.duration) {
                 const pct = (player.currentTime / player.duration) * 100;
@@ -433,7 +467,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        // 3. المشاركة
         function shareSite() {
             if (navigator.share) {
                 navigator.share({ title: 'صدقة جارية', url: window.location.href });
